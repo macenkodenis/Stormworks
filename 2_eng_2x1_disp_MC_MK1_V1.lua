@@ -1,15 +1,7 @@
-i=1
-j=1
-t=1
-wrn=false
+t=1						-- timer
+wrn=false				-- warning light state trigger
 
-inpB={
-	{inP1,7},
-	{inP2,8},
-	{inRpmS,16}
-	}
-
-cols={
+cols={					-- List of colors
 	red = {96,0,0},
 	grn = {0,96,0},
 	yel = {96,96,0},
@@ -44,7 +36,7 @@ function onTick()
 	inConS = input.getNumber(29)
 	inTC = input.getNumber(30)
 
-	cp={
+	cp={									-- right bottom field variant list
 		{"l/s",inCon,3},
 		{"l/min",inCon*60,5},
 		{"l/h",inCon*3600,6},
@@ -57,7 +49,7 @@ function onTick()
 end
 
 function onDraw()
-	tp =  math.floor(60/inTC)
+	tp =  math.floor(60/inTC)			-- warning light trigger timer
 	if t>=0 and t<=tp/2 then
 		wrn=true
 		t = t+1
@@ -67,90 +59,90 @@ function onDraw()
 	else t=0
 	end
 
-	setC("gry")
+	setC("gry")							-- background color
 	screen.drawRectF(0,0,64,32)
 
-	drPB(3,0,58,1,false,0,inStr,"red","blk")
+	drPB(3,0,58,1,false,0,inStr,"red","blk")								-- steering bar
 	
-	drPB(0,0,2,17,true,-1,inTrtl1,"grn","blk")
-	drPB(62,0,2,17,true,-1,inTrtl2,"grn","blk")
+	drPB(0,0,2,17,true,-1,inTrtl1,"grn","blk")								-- trottle eng 1 bar
+	drPB(62,0,2,17,true,-1,inTrtl2,"grn","blk") 							-- trottle eng 1 bar
 
-	selCol(inRps1,nil,inRpsYel,inRpsRed,"grn","yel","red")
+	selCol(inRps1,nil,inRpsYel,inRpsRed,"grn","yel","red")					-- rps/rpm 1 engine color
 	if inRpmS then
-		drTB(3,2,inRps1*60,1,4,selC,"blk")
+		drTB(3,2,inRps1*60,1,4,selC,"blk")									-- rpm 1 engine
 	else
-		drTB(3,2,inRps1,1,3,selC,"blk",2)
+		drTB(3,2,inRps1,1,3,selC,"blk",2)									-- rps 1 engine
 	end
 
-	selCol(inRps1,inRps2,inRpsYel,inRpsRed,"grn","yel","red")
+	selCol(inRps1,inRps2,inRpsYel,inRpsRed,"grn","yel","red")				-- "rps/rpm" text color
 	if inRpmS then
 		drTB(22,2,"RPM",0,4,selC)
 	else
 		drTB(22,2,"RPS",0,4,selC)
 	end
 
-	selCol(inRps2,nil,inRpsYel,inRpsRed,"grn","yel","red")
+	selCol(inRps2,nil,inRpsYel,inRpsRed,"grn","yel","red")					-- rps/rpm 2 engine color
 	if inRpmS then
-		drTB(40,2,inRps2*60,-1,4,selC,"blk")
+		drTB(40,2,inRps2*60,-1,4,selC,"blk")								-- rpm 2 engine
 	else
-		drTB(43,2,inRps2,-1,3,selC,"blk",2)
+		drTB(43,2,inRps2,-1,3,selC,"blk",2)									-- rps 2 engine
 	end
 
-	selCol(inTemp1,nil,inTempNrm,inTempRed,"yel","grn","red",inTempWrn)
-	drTB(3,10,inTemp1,1,3,selC,"blk",2)
+	selCol(inTemp1,nil,inTempNrm,inTempRed,"yel","grn","red",inTempWrn) 	-- temperature 1 engine color
+	drTB(3,10,inTemp1,1,3,selC,"blk",2)															
 
-	selCol(inTemp1,inTemp2,inTempNrm,inTempRed,"yel","grn","red",inTempWrn)
+	selCol(inTemp1,inTemp2,inTempNrm,inTempRed,"yel","grn","red",inTempWrn)	-- temperature text color
 	drTB(22,10,"temp",0,4,selC)
 	
-	selCol(inTemp2,nil,inTempNrm,inTempRed,"yel","grn","red",inTempWrn)
+	selCol(inTemp2,nil,inTempNrm,inTempRed,"yel","grn","red",inTempWrn)		-- temperature 2 engine color
 	drTB(43,10,inTemp2,-1,3,selC,"blk",2)
 
-	if inFuelMax <= 9999 then
+	if inFuelMax <= 9999 then			--Fuel text field size
 		xs = 4
 	elseif inFuelMax <= 99999 then
 		xs = 5
 	else 
 		xs = 6
 	end
-	selCol(inFuel,nil,nil,-inFuelMax*inFuelRed/100,"yel",nil,"red",-inFuelMax*inFuelWarn/100)
-	drTB(3,18,"Fuel",0,xs,selC)
-	drTB(3,25,inFuel,0,xs,selC,"blk")
-	drPB(0,18,2,14,true,-1,inFuel/inFuelMax,selC,"blk")
+	selCol(inFuel,nil,nil,-inFuelMax*inFuelRed/100,"yel",nil,"red",-inFuelMax*inFuelWarn/100)	-- Fuel gauge color
+	drTB(3,18,"Fuel",0,xs,selC)																	-- Fuel text
+	drTB(3,25,inFuel,0,xs,selC,"blk")															-- Fuel gauge
+	drPB(0,18,2,14,true,-1,inFuel/inFuelMax,selC,"blk")											-- Fuel bar
 
-	if inConS <= 3 then
+	if inConS <= 3 then															-- consumtion/speed position and color
 		x=65
 		scol="yel"
 	else
 		x=61
 		scol="blu"
-		drPB(62,18,2,14,true,-1,inSpd/inMaxSpd,scol,"blk")
+		drPB(62,18,2,14,true,-1,inSpd/inMaxSpd,scol,"blk")						-- speed bar 
 	end
-	drTB(x-(cp[inConS][3]*5+1),18,cp[inConS][1],0,cp[inConS][3],scol)
-	drTB(x-(cp[inConS][3]*5+1),25,cp[inConS][2],0,cp[inConS][3],scol,"blk")
+	drTB(x-(cp[inConS][3]*5+1),18,cp[inConS][1],0,cp[inConS][3],scol)			-- consumption/speed text
+	drTB(x-(cp[inConS][3]*5+1),25,cp[inConS][2],0,cp[inConS][3],scol,"blk")		-- consumption/speed gauge
 
 end
 
-function setC(col,a)
+function setC(col,a)													--set color function
 	if a == nil then
 		a=255
 	end
 	if cols[col] then
 		screen.setColor(cols[col][1],cols[col][2],cols[col][3],a)
 	else
-		print("no color")
-		screen.setColor(96,96,96,a)
+		print("no color")			--debug string
+		screen.setColor(96,96,96,a) --backup default color
 	end		
 end
 
-function drTB(x,y,t,ax,cn,tc,bc,to)
-	if bc then
-		setC(bc)
-		if to then
-			screen.drawRectF(x,y,cn*5+1+to,7)
-		else
-			screen.drawRectF(x,y,cn*5+1,7)
-		end
-	end
+function drTB(x,y,t,ax,cn,tc,bc,to)					-- textbar draw function with optional background. X size defined by character number and offset, Y size fixed 7
+	if bc then										-- "x"  - X coordinate, 
+		setC(bc)									-- "y"  - Y coordinate of field
+		if to then									-- "t"  - text, numbers automaticaly floored.
+			screen.drawRectF(x,y,cn*5+1+to,7)		-- "ta" - text alignment (-1 left, 0 center, 1 right)
+		else										-- "cn" - max character number (define field x size),
+			screen.drawRectF(x,y,cn*5+1,7)			-- "tc" - text color,
+		end											-- "bc" - background color (optional, if not defined - no background),
+	end												-- "to" - text offset (from left or right side, defined by alignment, not work for 0) (optional, if not defined, than 0)
 	if tc then
 		setC(tc)
 	else 
@@ -171,20 +163,20 @@ function drTB(x,y,t,ax,cn,tc,bc,to)
 	end
 end
 
-function selCol(tNum1,tNum2,mNum,hNum,lCol,mCol,hCol,wNum)
-	if wrn and wNum and wNum<0 and (tNum1 < -wNum or (tNum2 and tNum2 < -wNum)) then
-		if mCol then
+function selCol(tNum1,tNum2,mNum,hNum,lCol,mCol,hCol,wNum)									-- color set function, checks 2 numbers (optional) with 3 predefined levels (optional)
+	if wrn and wNum and wNum<0 and (tNum1 < -wNum or (tNum2 and tNum2 < -wNum)) then		-- "tNum1", "tNum2" - numbers to check, second is optional, can be "nil"
+		if mCol then																		-- "mNum" - first triger level (optional, must exist if mCol not nil)
+			selC=mCol																		-- "hNum" - second triger level (positive trigers if tNum bigger than hNum, negative trigger if tNum smaller than hNum)
+		else																				-- "lCol" - standard, pretrigered color
+			selC=lCol																		-- "mCol" - first triger color (optional)
+		end																					-- "hCol" - second triger color
+	elseif wrn and wNum and wNum>0 and (tNum1 > wNum or (tNum2 and tNum2 > wNum)) then		-- "wNum" - warning triger level, will blink between mCol and hCol if mCol exist, else lCol and hCol ->
+		if mCol then																		-- -> (optional, positive trigers if tNum bigger than wNum, negative trigger if tNum smaller than wNum)
 			selC=mCol
 		else
 			selC=lCol
 		end
-	elseif wrn and wNum and wNum>0 and (tNum1 > wNum or (tNum2 and tNum2 > wNum)) then
-		if mCol then
-			selC=mCol
-		else
-			selC=lCol
-		end
-	elseif mCol then
+	elseif mCol and mNum then
 		if hNum < 0 and tNum1 <= -hNum or (tNum2 and tNum2 <= -hNum) then
 			selC = hCol
 		elseif hNum < 0 and (tNum1 <= -mNum and tNum1 > -hNum) or (tNum2 and tNum2 <= -mNum and tNum2 > -hNum) then
@@ -207,16 +199,16 @@ function selCol(tNum1,tNum2,mNum,hNum,lCol,mCol,hCol,wNum)
 	end
 end
 
-function drPB (x,y,xs,ys,v,a,pn,pc,bc)
-	if bc then
-		setC(bc)
-		screen.drawRectF(x,y,xs,ys)
-	end
-		setC(pc)
-	if v then
-		p=math.floor(ys*math.abs(pn))
-		if a == 1 then
-			screen.drawRectF(x,y,xs,p)
+function drPB (x,y,xs,ys,v,a,pn,pc,bc)							-- progress bar draw function
+	if bc then													-- "x"  - X coordinate
+		setC(bc)												-- "y"  - Y coordinate
+		screen.drawRectF(x,y,xs,ys)								-- "xs" - horizontal size
+	end															-- "ys" - vertiacal size
+		setC(pc)												-- "v" - is vertical? (true/false)
+	if v then													-- "a" - alignment (-1 to left/top, 0 center (2 sides), 1 to right\bottom)
+		p=math.floor(ys*math.abs(pn))							-- "pn" - progress number (0-1)
+		if a == 1 then											-- "pc" - progress color
+			screen.drawRectF(x,y,xs,p)							-- "bc" - background color (optional, if nil - no background)
 		elseif a == -1 then
 			screen.drawRectF(x,y+ys-p,xs,p)
 		else
