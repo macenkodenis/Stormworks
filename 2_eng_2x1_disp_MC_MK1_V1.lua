@@ -1,6 +1,7 @@
 t=1						-- timer
 wrn=false				-- warning light state trigger
 
+
 cols={					-- List of colors
 	red = {96,0,0},
 	grn = {0,96,0},
