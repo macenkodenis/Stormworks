@@ -148,8 +148,11 @@ function drPBVU (x,y,xs,ys,pn,pc,bc)							-- Vertical from bottom to top progre
 	p=math.floor(ys*math.abs(pn))
 	screen.drawRectF(x,y+ys-p,xs,p)
 end
-
-function drPBHC (x,y,xs,ys,pn,pc,bc)
+function drPBHC (x,y,xs,ys,pn,pc,bc)							-- Horizontal from center to sides progress bar draw function:
+	if bc then													-- "x"  - X coordinate, "y"  - Y coordinate,
+		setC(bc)												-- "xs" - horizontal size, "ys" - vertiacal size
+		screen.drawRectF(x,y,xs,ys)								-- "pn" - progress number (0-1), "pc" - progress color
+	end															-- "bc" - background color (optional, if nil - no background)
 	p=math.floor(((xs/2)-1)*math.abs(pn))
 	if xs%2 == 0 then
 		if pn >= 0 then
