@@ -62,10 +62,10 @@ function onDraw()
 	setC("gry")							-- background color
 	screen.drawRectF(0,0,64,32)
 
-	drPB(3,0,58,1,false,0,inStr,"red","blk")								-- steering bar
+	drPBHC(3,0,58,1,inStr,"red","blk")										-- steering bar
 	
-	drPB(0,0,2,17,true,-1,inTrtl1,"grn","blk")								-- trottle eng 1 bar
-	drPB(62,0,2,17,true,-1,inTrtl2,"grn","blk") 							-- trottle eng 1 bar
+	drPBVU(0,0,2,17,inTrtl1,"grn","blk")									-- trottle eng 1 bar
+	drPBVU(62,0,2,17,inTrtl2,"grn","blk") 									-- trottle eng 1 bar
 
 	selCol(inRps1,nil,inRpsYel,inRpsRed,"grn","yel","red")					-- rps/rpm 1 engine color
 	if inRpmS then
@@ -107,18 +107,21 @@ function onDraw()
 	selCol(inFuel,nil,nil,-inFuelMax*inFuelRed/100,"yel",nil,"red",-inFuelMax*inFuelWarn/100)	-- Fuel gauge color
 	drTB(3,18,"Fuel",0,xs,selC)																	-- Fuel text
 	drTB(3,25,inFuel,0,xs,selC,"blk")															-- Fuel gauge
-	drPB(0,18,2,14,true,-1,inFuel/inFuelMax,selC,"blk")											-- Fuel bar
+	drPBVU(0,18,2,14,inFuel/inFuelMax,selC,"blk")											-- Fuel bar
 
-	if inConS <= 3 then															-- consumtion/speed position and color
-		x=65
-		scol="yel"
-	else
-		x=61
-		scol="blu"
-		drPB(62,18,2,14,true,-1,inSpd/inMaxSpd,scol,"blk")						-- speed bar 
+	if inConS ~= 0 then
+		if inConS <= 3 then															-- consumtion/speed position and color
+			x=65
+			scol="yel"
+		else
+			x=61
+			scol="blu"
+			drPBVU(62,18,2,14,inSpd/inMaxSpd,scol,"blk")							-- speed bar 
+		end
+		drTB(x-(cp[inConS][3]*5+1),18,cp[inConS][1],0,cp[inConS][3],scol)			-- consumption/speed text
+		drTB(x-(cp[inConS][3]*5+1),25,cp[inConS][2],0,cp[inConS][3],scol,"blk")		-- consumption/speed gauge
 	end
-	drTB(x-(cp[inConS][3]*5+1),18,cp[inConS][1],0,cp[inConS][3],scol)			-- consumption/speed text
-	drTB(x-(cp[inConS][3]*5+1),25,cp[inConS][2],0,cp[inConS][3],scol,"blk")		-- consumption/speed gauge
+
 
 end
 
@@ -199,55 +202,32 @@ function selCol(tNum1,tNum2,mNum,hNum,lCol,mCol,hCol,wNum)									-- color set 
 	end
 end
 
-function drPB (x,y,xs,ys,v,a,pn,pc,bc)							-- progress bar draw function
-	if bc then													-- "x"  - X coordinate
-		setC(bc)												-- "y"  - Y coordinate
-		screen.drawRectF(x,y,xs,ys)								-- "xs" - horizontal size
-	end															-- "ys" - vertiacal size
-		setC(pc)												-- "v" - is vertical? (true/false)
-	if v then													-- "a" - alignment (-1 to left/top, 0 center (2 sides), 1 to right\bottom)
-		p=math.floor(ys*math.abs(pn))							-- "pn" - progress number (0-1)
-		if a == 1 then											-- "pc" - progress color
-			screen.drawRectF(x,y,xs,p)							-- "bc" - background color (optional, if nil - no background)
-		elseif a == -1 then
-			screen.drawRectF(x,y+ys-p,xs,p)
-		else
-			p=math.floor(((ys/2)-1)*math.abs(pn))
-			if xs%2 == 0 then
-				if pn <= 0 then
-					screen.drawRectF(x,y-1+(ys/2),xs,p+2)
-				elseif pn > 0 then
-					screen.drawRectF(x,y-1+(ys/2)-p,xs,p+2)
-				end
-			else
-				if pn <= 0 then
-					screen.drawRectF(x,y+(ys/2),xs,p+1)
-				elseif pn > 0 then
-					screen.drawRectF(x,y+(ys/2)-p,xs,p+1)
-				end
-			end
+function drPBVU (x,y,xs,ys,pn,pc,bc)							-- Vertical from bottom to top progress bar draw function:
+	if bc then													-- "x"  - X coordinate, "y"  - Y coordinate,
+		setC(bc)												-- "xs" - horizontal size, "ys" - vertiacal size
+		screen.drawRectF(x,y,xs,ys)								-- "pn" - progress number (0-1), "pc" - progress color
+	end															-- "bc" - background color (optional, if nil - no background)
+	setC(pc)
+	p=math.floor(ys*math.abs(pn))
+	screen.drawRectF(x,y+ys-p,xs,p)
+end
+function drPBHC (x,y,xs,ys,pn,pc,bc)							-- Horizontal from center to sides progress bar draw function:
+	if bc then													-- "x"  - X coordinate, "y"  - Y coordinate,
+		setC(bc)												-- "xs" - horizontal size, "ys" - vertiacal size
+		screen.drawRectF(x,y,xs,ys)								-- "pn" - progress number (0-1), "pc" - progress color
+	end															-- "bc" - background color (optional, if nil - no background)
+	p=math.floor(((xs/2)-1)*math.abs(pn))
+	if xs%2 == 0 then
+		if pn >= 0 then
+			screen.drawRectF(x-1+(xs/2),y,p+2,ys)
+		elseif pn < 0 then
+			screen.drawRectF(x-1+(xs/2)-p,y,p+2,ys)
 		end
 	else
-		p=math.floor(xs*math.abs(pn))
-		if a == 1 then
-			screen.drawRectF(x,y,p,ys)
-		elseif a == -1 then
-			screen.drawRectF(x+xs-p,y,p,ys)
-		else
-			p=math.floor(((xs/2)-1)*math.abs(pn))
-			if xs%2 == 0 then
-				if pn >= 0 then
-					screen.drawRectF(x-1+(xs/2),y,p+2,ys)
-				elseif pn < 0 then
-					screen.drawRectF(x-1+(xs/2)-p,y,p+2,ys)
-				end
-			else
-				if pn >= 0 then
-					screen.drawRectF(x+(xs/2),y,p+1,ys)
-				elseif pn < 0 then
-					screen.drawRectF(x+(xs/2)-p,y,p+1,ys)
-				end
-			end
+		if pn >= 0 then
+			screen.drawRectF(x+(xs/2),y,p+1,ys)
+		elseif pn < 0 then
+			screen.drawRectF(x+(xs/2)-p,y,p+1,ys)
 		end
 	end
 end
