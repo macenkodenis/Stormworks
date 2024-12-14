@@ -154,16 +154,17 @@ function drPBHC (x,y,xs,ys,pn,pc,bc)							-- Horizontal from center to sides pr
 		screen.drawRectF(x,y,xs,ys)								-- "pn" - progress number (0-1), "pc" - progress color
 	end															-- "bc" - background color (optional, if nil - no background)
 	p=math.floor(((xs/2)-1)*math.abs(pn))
+	setC(pc)
 	if xs%2 == 0 then
 		if pn >= 0 then
 			screen.drawRectF(x-1+(xs/2),y,p+2,ys)
-		elseif pn < 0 then
+		else
 			screen.drawRectF(x-1+(xs/2)-p,y,p+2,ys)
 		end
 	else
 		if pn >= 0 then
 			screen.drawRectF(x+(xs/2),y,p+1,ys)
-		elseif pn < 0 then
+		else
 			screen.drawRectF(x+(xs/2)-p,y,p+1,ys)
 		end
 	end
